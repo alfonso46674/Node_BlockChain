@@ -33,8 +33,7 @@ class Chain{
 
     constructor(){
         //genesis block
-        this.chain = [new Block(new Transaction(),'')
-        ];
+        this.chain = [new Block(new Transaction(200,'genesis','John'),'')];
     }
 
     get lastBlock(){
@@ -43,7 +42,15 @@ class Chain{
 }
 
 class Transaction{
-    constructor() {}
+    constructor(
+        public amount: number,
+        public payer: string, // public key
+        public payee: string, // public key
+    ) {}
+
+    toString(){
+        return JSON.stringify(this);
+    }
     
       
 }
