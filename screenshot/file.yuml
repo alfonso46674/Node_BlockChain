@@ -1,0 +1,18 @@
+//yuml.me
+
+[Transaction]
+[Wallet]
+[Block]
+[Chain]
+
+//dependency
+[Wallet]-.->[Transaction] 
+
+// association
+[Block]-->[Transaction]
+
+// composition
+[Chain]++->[Block] 
+
+//dependency
+[Chain]-.->[Transaction] 
