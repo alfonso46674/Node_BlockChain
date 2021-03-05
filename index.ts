@@ -4,6 +4,9 @@ import { stringify } from 'node:querystring';
 
 
 class Block{
+    //one time use data
+    public nonce = Math.round(Math.random() * 9999999);
+    
     constructor(
         public transaction: Transaction,
         public prevHash: string,
@@ -54,8 +57,32 @@ class Chain{
         if(isValid){
             //create new block with the previous block hash, and the current transaction
             const newBlock = new Block(transaction, this.lastBlock.hash);
+            //Proof of Work
+            this.mine(newBlock.nonce);
             //push new block to the chain
             this.chain.push(newBlock);
+        }
+    }
+
+    //attempt to find the nonce value of the current Block that wants to be verified in the chain
+    //Proof of Work
+    mine(nonce:number){
+        let solution = 1;
+        console.log("Mining....");
+
+        while(true){
+            //create hash with 128 bits algorithm
+            const hash = crypto.createHash('MD5');
+            hash.update((nonce + solution).toString()).end();
+
+            const attempt = hash.digest('hex');
+
+            //create hashes until one starts with 0000, that will be the solution
+            if (attempt.substr(0,4) === '0000'){
+                console.log(`Solved: ${solution}`);
+                return solution;
+            }
+            solution += 1;
         }
     }
 }
