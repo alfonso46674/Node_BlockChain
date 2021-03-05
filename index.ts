@@ -1,4 +1,5 @@
 import * as crypto from 'crypto';
+import { stringify } from 'node:querystring';
 
 
 
@@ -39,6 +40,14 @@ class Chain{
     get lastBlock(){
         return this.chain[this.chain.length - 1];
     }
+
+    addBlock(transaction: Transaction, senderPublicKey: string, signature: Buffer){
+
+        //create new block with the previous block hash, and the current transaction
+        const newBlock = new Block(transaction, this.lastBlock.hash);
+        //push new block to the chain
+        this.chain.push(newBlock);
+    }
 }
 
 class Transaction{
@@ -56,6 +65,34 @@ class Transaction{
 }
 
 class Wallet {
-    constructor() {}
+    public publicKey: string; // for receiving money
+    public privateKey: string; //for spending money
+
+    constructor() {
+        const keypair = crypto.generateKeyPairSync('rsa', {
+            modulusLength: 2048,
+            publicKeyEncoding: { type: 'spki', format: 'pem' },
+            privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
+          });
+
+        this.publicKey = keypair.publicKey;
+        this.privateKey = keypair.privateKey;
+    }
+
+    sendMoney(payeePublicKey: string, amount: number){
+        //create a transaction to send money from the current wallet to another person
+        const transaction = new Transaction(amount, this.publicKey, payeePublicKey);
+
+        //create a signature using the transaction data as the value
+        const sign = crypto.createSign('SHA256');
+        sign.update(transaction.toString()).end();
+
+        //sign the signature with the private key, as a one time password that can be verified with the public key
+        const signature = sign.sign(this.privateKey);
+        
+        //Add new block to blockchain
+        Chain.instance.addBlock(transaction,this.publicKey, signature);
+
+    }
 
 }
