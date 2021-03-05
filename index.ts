@@ -43,10 +43,20 @@ class Chain{
 
     addBlock(transaction: Transaction, senderPublicKey: string, signature: Buffer){
 
-        //create new block with the previous block hash, and the current transaction
-        const newBlock = new Block(transaction, this.lastBlock.hash);
-        //push new block to the chain
-        this.chain.push(newBlock);
+        //create a signature verification
+        const verifier = crypto.createVerify('SHA256');
+        //pass the transaction to the verifier
+        verifier.update(transaction.toString());
+
+        //verify the signature with the public key
+        const isValid = verifier.verify(senderPublicKey,signature);
+
+        if(isValid){
+            //create new block with the previous block hash, and the current transaction
+            const newBlock = new Block(transaction, this.lastBlock.hash);
+            //push new block to the chain
+            this.chain.push(newBlock);
+        }
     }
 }
 
