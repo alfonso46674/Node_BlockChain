@@ -1,9 +1,18 @@
+
 //yuml.me
 
-[Transaction]
-[Wallet]
-[Block]
-[Chain]
+[Transaction|+amount:number;+payer:string;+payee:string| +toString()]
+
+[Wallet| +publicKey:string; +privateKey:string| +sendMoney(payeePublicKey:string
+amount:number)]
+
+
+[Block|+nonce:number;+transaction:Transaction;+prevHash:string;+timestamp:Date| +hash()]
+
+
+[Chain|+chain:Array(Block)| lastBlock();  addBlock(transaction:Transaction
+senderPublicKey: string
+signature: Buffer); mine(nonce:number) ]
 
 //dependency
 [Wallet]-.->[Transaction] 
