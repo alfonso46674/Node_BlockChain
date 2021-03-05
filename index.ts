@@ -1,7 +1,19 @@
 import * as crypto from 'crypto';
 import { stringify } from 'node:querystring';
 
+class Transaction{
+    constructor(
+        public amount: number,
+        public payer: string, // public key
+        public payee: string, // public key
+    ) {}
 
+    toString(){
+        return JSON.stringify(this);
+    }
+    
+      
+}
 
 class Block{
     //one time use data
@@ -87,19 +99,7 @@ class Chain{
     }
 }
 
-class Transaction{
-    constructor(
-        public amount: number,
-        public payer: string, // public key
-        public payee: string, // public key
-    ) {}
 
-    toString(){
-        return JSON.stringify(this);
-    }
-    
-      
-}
 
 class Wallet {
     public publicKey: string; // for receiving money
@@ -133,3 +133,12 @@ class Wallet {
     }
 
 }
+const John = new Wallet();
+const Mike = new Wallet();
+const Donovan = new Wallet();
+
+John.sendMoney(Mike.publicKey,20);
+Mike.sendMoney(Donovan.publicKey,50);
+Donovan.sendMoney(John.publicKey,15);
+
+console.log(Chain.instance);
